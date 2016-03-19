@@ -45,7 +45,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 col = tex2D(_MainTex, i.uv) * _Color;
-				col.a = sin(i.uv.y * PI);
+				col.a = sin(i.uv.y * PI) * 0.95;
 				return col;
 			}
 			ENDCG
