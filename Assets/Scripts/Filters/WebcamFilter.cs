@@ -27,12 +27,12 @@ public class WebcamFilter : Filter
 	public void SetMirrorX (bool value)
 	{
 		mirrorX = value;
-		material.SetFloat("_MirrorX", mirrorX ? 1f: 0f);
+		Shader.SetGlobalFloat("_MirrorX", mirrorX ? 1f: 0f);
 	}
 
 	public void SetMirrorY (bool value)
 	{
 		mirrorY = value;
-		material.SetFloat("_MirrorY", mirrorY ? 1f: 0f);
+		Shader.SetGlobalFloat("_MirrorY", mirrorY ? 1f: 0f);
 	}
 }

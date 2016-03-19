@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class ChromaDetector : MonoBehaviour 
 {
 	SoundGenerator soundGenerator;
+	UI ui;
 	FrameBuffer frameBuffer;
 	Texture2D texture2D;
 	RenderTexture renderTexture;
@@ -21,6 +22,7 @@ public class ChromaDetector : MonoBehaviour
 	void Start ()
 	{
 		soundGenerator = GameObject.FindObjectOfType<SoundGenerator>();
+		ui = GameObject.FindObjectOfType<UI>();
 		frameBuffer = GetComponent<FrameBuffer>();
 		renderTexture = frameBuffer.GetCurrentTexture();
 
@@ -28,6 +30,12 @@ public class ChromaDetector : MonoBehaviour
 		texture2D = new Texture2D(width, height);
 		colorArray = new Color[width * height];
 		position = Vector2.zero;
+	}
+
+	float distanceBetweenColors (Color colorA, Color colorB)
+	{
+		return (colorA.r - colorB.r)*(colorA.r - colorB.r)+(colorA.g - colorB.g)*(colorA.g - colorB.g)+(colorA.b - colorB.b)*(colorA.b - colorB.b);
+		// return Mathf.Sqrt((colorA.r - colorB.r)*(colorA.r - colorB.r)+(colorA.g - colorB.g)*(colorA.g - colorB.g)+(colorA.b - colorB.b)*(colorA.b - colorB.b));
 	}
 
 	void Update () 
@@ -49,15 +57,15 @@ public class ChromaDetector : MonoBehaviour
 		foreach (Color color in colorArray) {
 			position.x = (index % width);
 			position.y = Mathf.Floor(index / width);
-			if (color.r - color.g - color.b >= 1f) {
+			if (distanceBetweenColors(color, ui.color1) < ui.color1Treshold*ui.color1Treshold) {
 				target1.x += position.x;
 				target1.y += position.y;
 				++count1;
-			} else if (color.g - color.r - color.b >= 1f) {
+			} else if (distanceBetweenColors(color, ui.color2) < ui.color2Treshold*ui.color2Treshold) {
 				target2.x += position.x;
 				target2.y += position.y;
 				++count2;
-			} else if (color.b - color.r - color.g >= 1f) {
+			} else if (distanceBetweenColors(color, ui.color3) < ui.color3Treshold*ui.color3Treshold) {
 				target3.x += position.x;
 				target3.y += position.y;
 				++count3;
