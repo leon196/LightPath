@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [RequireComponent (typeof (FrameBuffer))]
 public class ChromaDetector : MonoBehaviour 
 {
+	SoundGenerator soundGenerator;
 	FrameBuffer frameBuffer;
 	Texture2D texture2D;
 	RenderTexture renderTexture;
@@ -17,6 +18,7 @@ public class ChromaDetector : MonoBehaviour
 
 	void Start ()
 	{
+		soundGenerator = GameObject.FindObjectOfType<SoundGenerator>();
 		frameBuffer = GetComponent<FrameBuffer>();
 		renderTexture = frameBuffer.GetCurrentTexture();
 
@@ -51,10 +53,12 @@ public class ChromaDetector : MonoBehaviour
 			++index;
 		}
 
-		if (count > 0) {
+		if (count > 30) {
 			target.x = (target.x / count) / (float)width;
 			target.y = (target.y / count) / (float)height;
 			targetPosition = target;
+
+			soundGenerator.SetStartFrequency(target.x);
 		}
 	}
 

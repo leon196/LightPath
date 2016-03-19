@@ -26,7 +26,7 @@
 				uv.y = lerp(uv.y, 1. - uv.y, _MirrorY);
 				fixed4 col = tex2D(_TextureWebcam, uv);
 
-				col.rgb = lerp(col.rgb, float3(1,0,0), step(0.0, col.r - col.g - col.g));
+				col.rgb = lerp(col.rgb, float3(1,0,0), step(0.1, col.r - col.g - col.b));
 
 				return col;
 			}

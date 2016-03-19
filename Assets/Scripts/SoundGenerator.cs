@@ -3,8 +3,8 @@ using System.Collections;
 
 public class SoundGenerator : MonoBehaviour 
 {
-	private float startFrequency = 0f;
-	private SfxrSynth synth;
+	float startFrequency = 0f;
+	SfxrSynth synth;
 
 	void Start () 
 	{
@@ -24,5 +24,12 @@ public class SoundGenerator : MonoBehaviour
 			synth.parameters.SetSettingsString("0,,0.032,0.4138,0.4365," + startFrequency + ",,,,,,0.3117,0.6925,,,,,,1,,,,,0.5");
 			synth.Play();
 		}
+	}
+
+	public void SetStartFrequency (float v)
+	{
+		startFrequency = v;
+		synth.parameters.SetSettingsString("0,,0.032,0.4138,0.4365," + startFrequency + ",,,,,,0.3117,0.6925,,,,,,1,,,,,0.5");
+		synth.Play();
 	}
 }
