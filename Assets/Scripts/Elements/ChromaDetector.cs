@@ -4,27 +4,44 @@ using System.Collections.Generic;
 
 public class ChromaDetector : MonoBehaviour 
 {
-	// SoundGenerator soundGenerator;
-	UI ui;
 	Texture2D texture2D;
 	RenderTexture renderTexture;
 	Color[] colorArray;
 	Rect rect;
-	Vector2 position;
-	public Vector2 targetPosition1;
-	public Vector2 targetPosition2;
-	public Vector2 targetPosition3;
+	Camera cameraUI;
+
+	public Light[] lightArray;
 
 	void Start ()
 	{
-		// soundGenerator = GameObject.FindObjectOfType<SoundGenerator>();
-		ui = GameObject.FindObjectOfType<UI>();
+		cameraUI = GameObject.FindObjectOfType<UI>().GetComponent<Camera>();
 		renderTexture = GetComponent<Camera>().targetTexture;
-
 		rect = new Rect(0f, 0f, Master.width, Master.height);
 		texture2D = new Texture2D(Master.width, Master.height);
 		colorArray = new Color[Master.width * Master.height];
-		position = Vector2.zero;
+
+		lightArray = GameObject.FindObjectsOfType<Light>();
+
+		if (lightArray.Length > 0) {
+			lightArray[0].colorIntegerCode = new Color(0,0,1,1);
+			if (lightArray.Length > 1) {
+				lightArray[1].colorIntegerCode = new Color(0,1,0,1);
+				if (lightArray.Length > 2) {
+					lightArray[2].colorIntegerCode = new Color(1,0,0,1);
+					if (lightArray.Length > 3) {
+						lightArray[3].colorIntegerCode = new Color(1,0,1,1);
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < lightArray.Length; ++i)
+		{
+			Light light = lightArray[i];
+			Shader.SetGlobalColor("_Color" + (i + 1), light.color);
+			Shader.SetGlobalColor("_ColorIntegerCode" + (i + 1), light.colorIntegerCode);
+			Shader.SetGlobalFloat("_ColorTreshold" + (i + 1), light.treshold);
+		}
 	}
 
 	void Update () 
@@ -32,64 +49,50 @@ public class ChromaDetector : MonoBehaviour
 		RenderTexture.active = renderTexture;
 		texture2D.ReadPixels(rect, 0, 0, false);
 		texture2D.Apply(false);
-		position = Vector2.zero;
 
 		colorArray = texture2D.GetPixels();
 		int index = 0;
-		Vector2 target1 = Vector2.zero;
-		Vector2 target2 = Vector2.zero;
-		Vector2 target3 = Vector2.zero;
-		int count1 = 0;
-		int count2 = 0;
-		int count3 = 0;
-		foreach (Color color in colorArray) {
-			position.x = (index % Master.width);
-			position.y = Mathf.Floor(index / Master.width);
-			if (color.r == 1f && color.g == 0f && color.b == 0f) {
-				target1.x += position.x;
-				target1.y += position.y;
-				++count1;
-			} else if (color.r == 0f && color.g == 1f && color.b == 0f) {
-				target2.x += position.x;
-				target2.y += position.y;
-				++count2;
-			} else if (color.r == 0f && color.g == 0f && color.b == 1f) {
-				target3.x += position.x;
-				target3.y += position.y;
-				++count3;
+
+		foreach (Light light in lightArray)
+		{
+			light.targetGlobal = Vector2.zero;
+			light.pixelCount = 0;
+		}
+
+		foreach (Color pixelColor in colorArray) 
+		{
+			foreach (Light light in lightArray)
+			{
+				if ( pixelColor.r == light.colorIntegerCode.r 
+					&& pixelColor.g == light.colorIntegerCode.g 
+					&& pixelColor.b == light.colorIntegerCode.b) 
+				{
+					light.targetGlobal.x += (index % Master.width);
+					light.targetGlobal.y += Mathf.Floor(index / Master.width);
+					++light.pixelCount;
+					break;
+				}
 			}
 			++index;
 		}
 
-		if (count1 > 0) {
-			target1.x = (target1.x / count1) / (float)Master.width;
-			target1.y = (target1.y / count1) / (float)Master.height;
-			targetPosition1 = target1;
+		for (int i = 0; i < lightArray.Length; ++i)
+		{
+			Light light = lightArray[i];
 
-			// soundGenerator.SetStartFrequency(target1.x);
+			if (light.pixelCount > 0) 
+			{
+				light.targetGlobal.x = (light.targetGlobal.x / light.pixelCount) / (float)Master.width;
+				light.targetGlobal.y = (light.targetGlobal.y / light.pixelCount) / (float)Master.height;
+
+				light.worldPosition = cameraUI.ViewportToWorldPoint(light.targetGlobal);
+				light.worldPosition.z = 0.5f;
+
+				light.UpdateHeadPosition();
+			}
+
+			Shader.SetGlobalColor("_Color" + (i + 1), light.color);
+			Shader.SetGlobalFloat("_ColorTreshold" + (i + 1), light.treshold);
 		}
-
-		if (count2 > 0) {
-			target2.x = (target2.x / count2) / (float)Master.width;
-			target2.y = (target2.y / count2) / (float)Master.height;
-			targetPosition2 = target2;
-
-			// soundGenerator.SetStartFrequency(target2.x);
-		}
-
-		if (count3 > 0) {
-			target3.x = (target3.x / count3) / (float)Master.width;
-			target3.y = (target3.y / count3) / (float)Master.height;
-			targetPosition3 = target3;
-
-			// soundGenerator.SetStartFrequency(target3.x);
-		}
-	}
-
-	public void UpdateResolution ()
-	{
-		rect = new Rect(0f, 0f, Master.width, Master.height);
-		texture2D = new Texture2D(Master.width, Master.height);
-		colorArray = new Color[Master.width * Master.height];
 	}
 }

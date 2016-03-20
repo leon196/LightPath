@@ -13,9 +13,15 @@
 			fixed4 _Color1;
 			fixed4 _Color2;
 			fixed4 _Color3;
-			float _Color1Treshold;
-			float _Color2Treshold;
-			float _Color3Treshold;
+			fixed4 _Color4;
+			fixed4 _ColorIntegerCode1;
+			fixed4 _ColorIntegerCode2;
+			fixed4 _ColorIntegerCode3;
+			fixed4 _ColorIntegerCode4;
+			float _ColorTreshold1;
+			float _ColorTreshold2;
+			float _ColorTreshold3;
+			float _ColorTreshold4;
 
 			float distanceColor (fixed4 colorA, fixed4 colorB)
 			{
@@ -28,10 +34,11 @@
 				fixed4 webcam = tex2D(_WebcamTexture, uv);
 				fixed4 col = fixed4(0,0,0,1);
 
-				// Extract color marker and mark them for CPU check
-				col.rgb = lerp(col.rgb, float3(1,0,0), step(distanceColor(webcam, _Color1), _Color1Treshold));
-				col.rgb = lerp(col.rgb, float3(0,1,0), step(distanceColor(webcam, _Color2), _Color2Treshold));
-				col.rgb = lerp(col.rgb, float3(0,0,1), step(distanceColor(webcam, _Color3), _Color3Treshold));
+				// Extract color marker
+				col.rgb = lerp(col.rgb, _ColorIntegerCode1, step(distanceColor(webcam, _Color1), _ColorTreshold1));
+				col.rgb = lerp(col.rgb, _ColorIntegerCode2, step(distanceColor(webcam, _Color2), _ColorTreshold2));
+				col.rgb = lerp(col.rgb, _ColorIntegerCode3, step(distanceColor(webcam, _Color3), _ColorTreshold3));
+				col.rgb = lerp(col.rgb, _ColorIntegerCode4, step(distanceColor(webcam, _Color4), _ColorTreshold4));
 
 				return col;
 			}
