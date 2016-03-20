@@ -11,9 +11,10 @@
 			#include "UnityCG.cginc"
 			
 			sampler2D _MainTex;
-			sampler2D _TextureWebcam;
-			sampler2D _GUITexture;
-			sampler2D _ChromaTexture;
+			sampler2D _WebcamTexture;
+			sampler2D _UITexture;
+			sampler2D _LightTexture;
+			sampler2D _FrameBuffer;
 
 			float _MirrorX;
 			float _MirrorY;
@@ -24,23 +25,33 @@
 			float _Color2Treshold;
 			float _Color3Treshold;
 
-			float distanceBetweenColors (float3 colorA, float3 colorB)
+			float distanceColor (fixed4 colorA, fixed4 colorB)
 			{
-				return sqrt((colorA.r - colorB.r)*(colorA.r - colorB.r)+(colorA.g - colorB.g)*(colorA.g - colorB.g)+(colorA.b - colorB.b)*(colorA.b - colorB.b));
+				return abs(colorA.r - colorB.r) + abs(colorA.g - colorB.g) + abs(colorA.b - colorB.b);
 			}
 
 			fixed4 frag (v2f_img i) : SV_Target 
 			{
 				float2 uv = i.uv.xy;
-				uv.x = lerp(uv.x, 1. - uv.x, _MirrorX);
-				uv.y = lerp(uv.y, 1. - uv.y, _MirrorY);
-				fixed4 col = tex2D(_ChromaTexture, uv);
-				fixed4 gui = tex2D(_GUITexture, uv);
+				fixed4 light = tex2D(_LightTexture, uv);
+				fixed4 gui = tex2D(_UITexture, uv);
 
-				// col.rgb = lerp(col, _Color1, step(distanceBetweenColors(col, _Color1), _Color1Treshold));
-				// col.rgb = lerp(col, _Color2, step(distanceBetweenColors(col, _Color2), _Color2Treshold));
-				// col.rgb = lerp(col, _Color3, step(distanceBetweenColors(col, _Color3), _Color3Treshold));
+				fixed4 webcam = tex2D(_WebcamTexture, uv);
+				fixed4 buffer = tex2D(_FrameBuffer, uv);
+				buffer.rgb *= 0.95;
 
+				// fixed4 col = webcam;
+				fixed4 col = float4(0,0,0,1);
+
+				// col.rgb = webcam.rgb * 0.5;
+				col.rgb = lerp(col.rgb, _Color1, step(distanceColor(webcam, _Color1), _Color1Treshold));
+				col.rgb = lerp(col.rgb, _Color2, step(distanceColor(webcam, _Color2), _Color2Treshold));
+				col.rgb = lerp(col.rgb, _Color3, step(distanceColor(webcam, _Color3), _Color3Treshold));
+
+				// float t = _Time * 20.;
+				// col = lerp(buffer, col, step(0.5, Luminance(abs(col.rgb - buffer.rgb))));
+				// col = lerp(buffer, col, step(0.9, distance(col, buffer)));
+				col = max(col, buffer);
 				col = lerp(col, gui, gui.a);
 
 				return col;

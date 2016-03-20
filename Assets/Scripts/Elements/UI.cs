@@ -70,16 +70,15 @@ public class UI : MonoBehaviour {
 			if (vertexCount1 < maxVertex) {
 				vertexCount1 += 1;
 				line1.SetVertexCount(vertexCount1);
-				positionArray1[vertexCount1 - 1] = pos;
 			} else {
 				for (int i = 0; i < vertexCount1 - 1; ++i) {
 					positionArray1[i] = positionArray1[i + 1];
 					line1.SetPosition(i, positionArray1[i]);
 				}
-				positionArray1[vertexCount1 - 1] = pos;
 			}
 		}
-		line1.SetPosition(vertexCount1 - 1, positionArray1[vertexCount1 - 1]);
+		positionArray1[vertexCount1 - 1] = pos;
+		line1.SetPosition(vertexCount1 - 1, pos);
 
 
 		pos = cam.ViewportToWorldPoint(chromaDetector.targetPosition2);

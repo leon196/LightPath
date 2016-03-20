@@ -4,9 +4,9 @@ using System.Collections;
 public class Webcam : MonoBehaviour 
 {
 	public string webcamName = "";
-	public float treshold = 0.1f;
-	public float fadeOutRatio = 0.95f;
-	WebCamTexture textureWebcam;
+	public bool mirrorX = false;
+	public bool mirrorY = false;
+	WebCamTexture texture;
 	int currentWebcam;
 
 	void Start () 
@@ -16,53 +16,50 @@ public class Webcam : MonoBehaviour
 			foreach (WebCamDevice device in WebCamTexture.devices) {
 				webcamName = webcamName + device.name + '\n';
 			}
-			Debug.Log(webcamName);
 
 			// Setup webcam texture
-			textureWebcam = new WebCamTexture();
-			Shader.SetGlobalTexture("_TextureWebcam", textureWebcam);
-			textureWebcam.Play();
+			texture = new WebCamTexture();
+			Shader.SetGlobalTexture("_WebcamTexture", texture);
+			texture.Play();
 
 			currentWebcam = 0;
-		}
 
-		UpdateUniforms();
+			Shader.SetGlobalFloat("_MirrorX", mirrorX ? 1f: 0f);
+			Shader.SetGlobalFloat("_MirrorY", mirrorY ? 1f: 0f);
+		}
 	}
 
 	void Update ()
 	{
-		// Control luminance treshold
-		// if (Input.GetKey(KeyCode.RightArrow)) {
-		// 	treshold = Mathf.Clamp(treshold + 0.001f, 0f, 1f);
-		// } else if (Input.GetKey(KeyCode.LeftArrow)) { 
-		// 	treshold = Mathf.Clamp(treshold - 0.001f, 0f, 1f);
-		// }
-
-		// Control fade out ratio
-		// if (Input.GetKey(KeyCode.DownArrow)) {
-		// 	fadeOutRatio = Mathf.Clamp(fadeOutRatio - 0.001f, 0f, 1f);
-		// } else if (Input.GetKey(KeyCode.UpArrow)) { 
-		// 	fadeOutRatio = Mathf.Clamp(fadeOutRatio + 0.001f, 0f, 1f);
-		// }
-
 		// Switch camera
 		if (Input.GetKeyDown(KeyCode.C)) {
 			if (WebCamTexture.devices.Length > 1) {
 				currentWebcam = (currentWebcam + 1) % WebCamTexture.devices.Length;
-				textureWebcam.Stop();
-				textureWebcam = new WebCamTexture(WebCamTexture.devices[currentWebcam].name);
-				Shader.SetGlobalTexture("_TextureWebcam", textureWebcam);
-				textureWebcam.Play();
+				texture.Stop();
+				texture = new WebCamTexture(WebCamTexture.devices[currentWebcam].name);
+				Shader.SetGlobalTexture("_WebcamTexture", texture);
+				texture.Play();
 			}
 		}
 
-		if (Input.anyKey) {
-			UpdateUniforms();
+		// Mirror X
+		if (Input.GetKeyDown(KeyCode.X))  {
+			SetMirrorX(!mirrorX);
+		// Mirror Y
+		} else if (Input.GetKeyDown(KeyCode.Y)) {
+			SetMirrorY(!mirrorY);
 		}
 	}
 
-	void UpdateUniforms () {
-		Shader.SetGlobalFloat("_TresholdMotion", treshold);
-		Shader.SetGlobalFloat("_FadeOutRatio", fadeOutRatio);
+	public void SetMirrorX (bool value)
+	{
+		mirrorX = value;
+		Shader.SetGlobalFloat("_MirrorX", mirrorX ? 1f: 0f);
+	}
+
+	public void SetMirrorY (bool value)
+	{
+		mirrorY = value;
+		Shader.SetGlobalFloat("_MirrorY", mirrorY ? 1f: 0f);
 	}
 }
