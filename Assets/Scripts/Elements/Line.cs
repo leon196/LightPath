@@ -6,14 +6,18 @@ public class Line : MonoBehaviour
 	LineRenderer renderer;
 	Vector2 lastPosition;
 	float currentDistance;
+	float lastTime;
 	int vertexCount;
 	Vector3[] positionArray;
+	bool isReady = false;
 
 	void Awake ()
 	{
 		vertexCount = 0;
 		lastPosition = Vector2.zero;
 		positionArray = new Vector3[Master.lineMaxVertexCount];
+		lastTime = Time.time;
+		isReady = true;
 
 		renderer = gameObject.AddComponent<LineRenderer>();
 		renderer.material = new Material(Shader.Find("Unlit/Line"));
@@ -27,9 +31,12 @@ public class Line : MonoBehaviour
 
 	public void UpdateHeadPosition (Vector3 position)
 	{
-		if (Vector2.Distance(lastPosition, position) > Master.lineMaxSegmentDistance) 
+		if (isReady
+			|| Vector2.Distance(lastPosition, position) > Master.lineMaxSegmentDistance
+			|| lastTime + Master.lineDelayTime < Time.time) 
 		{
 			lastPosition = position;
+			lastTime = Time.time;
 			if (vertexCount < positionArray.Length) 
 			{
 				++vertexCount;

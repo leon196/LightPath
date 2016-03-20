@@ -55,7 +55,7 @@ public class ChromaDetector : MonoBehaviour
 
 		foreach (Light light in lightArray)
 		{
-			light.targetGlobal = Vector2.zero;
+			// light.targetGlobal = Vector2.zero;
 			light.pixelCount = 0;
 		}
 
@@ -67,8 +67,8 @@ public class ChromaDetector : MonoBehaviour
 					&& pixelColor.g == light.colorIntegerCode.g 
 					&& pixelColor.b == light.colorIntegerCode.b) 
 				{
-					light.targetGlobal.x += (index % Master.width);
-					light.targetGlobal.y += Mathf.Floor(index / Master.width);
+					// light.targetGlobal.x += (index % Master.width);
+					// light.targetGlobal.y += Mathf.Floor(index / Master.width);
 					++light.pixelCount;
 					break;
 				}
@@ -80,16 +80,22 @@ public class ChromaDetector : MonoBehaviour
 		{
 			Light light = lightArray[i];
 
-			if (light.pixelCount > 0) 
-			{
-				light.targetGlobal.x = (light.targetGlobal.x / light.pixelCount) / (float)Master.width;
-				light.targetGlobal.y = (light.targetGlobal.y / light.pixelCount) / (float)Master.height;
+			// if (light.pixelCount > 0) 
+			// {
+				// light.targetGlobal.x = (light.targetGlobal.x / light.pixelCount) / (float)Master.width;
+				// light.targetGlobal.y = (light.targetGlobal.y / light.pixelCount) / (float)Master.height;
 
-				light.worldPosition = cameraUI.ViewportToWorldPoint(light.targetGlobal);
-				light.worldPosition.z = 0.5f;
+				// light.worldPosition = cameraUI.ViewportToWorldPoint(light.targetGlobal);
+				// light.worldPosition.z = 0.5f;
+			// }
 
-				light.UpdateHeadPosition();
-			}
+			// light.UpdateHeadPosition();
+
+			float lightRatio = light.pixelCount / (float)(Master.width * Master.height);
+			lightRatio = Mathf.Clamp(lightRatio * 8f, 0f, 1f);
+
+			light.brightness = Mathf.Lerp(light.brightness, lightRatio, Time.deltaTime);
+			light.UpdateVolume(light.brightness);
 
 			Shader.SetGlobalColor("_Color" + (i + 1), light.color);
 			Shader.SetGlobalFloat("_ColorTreshold" + (i + 1), light.treshold);

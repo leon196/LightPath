@@ -42,17 +42,18 @@
 
 				fixed4 webcam = tex2D(_WebcamTexture, uv);
 				fixed4 buffer = tex2D(_FrameBuffer, uv);
-				buffer.rgb *= 0.95;
+				buffer.rgb *= 0.98;
 
 				// fixed4 col = webcam;
-				// fixed4 col = light;
-				fixed4 col = float4(0,0,0,1);
+				fixed4 col = light;
+				// fixed4 col = buffer;//float4(0,0,0,1);
 
 				col.rgb = lerp(col.rgb, _Color1, step(distanceColor(light, _ColorIntegerCode1), 0.5));
 				col.rgb = lerp(col.rgb, _Color2, step(distanceColor(light, _ColorIntegerCode2), 0.5));
 				col.rgb = lerp(col.rgb, _Color3, step(distanceColor(light, _ColorIntegerCode3), 0.5));
 				col.rgb = lerp(col.rgb, _Color4, step(distanceColor(light, _ColorIntegerCode4), 0.5));
 
+				// col.rgb = lerp(col.rgb, light.rgb, step(0.1, Luminance(light)));
 				// col.rgb = saturate(col.rgb);
 
 				// float t = _Time * 20.;
