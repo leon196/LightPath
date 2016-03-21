@@ -1,6 +1,6 @@
 # LightPath
 
-![LightPath](img.jpg)
+![LightPath](http://i.giphy.com/xThuWehtO5eYlVKN7a.gif)
 
 This is the Unity3D project, with all the sources including :
 - Scripts/Renders/Webcam.cs : to get webcam in Unity3D
@@ -16,6 +16,6 @@ It was made during the [Culture Experience Days](https://www.weezevent.com/ced-w
 
 # Team
 
-Music : Raphaelle
-3D print, welding and arduino scripts : Julien and Alice
-Code : Leon
+- Music : Raphaelle
+- 3D print, welding and arduino scripts : Julien and Alice
+- Code : Leon

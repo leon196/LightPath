@@ -1,6 +1,7 @@
 ﻿Shader "Hidden/Game" {
 	Properties {
 		_MainTex ("Texture", 2D) = "white" {}
+		_ShowWebcam ("Show Webcam", Float) = 0
 	}
 	SubShader {
 		Cull Off ZWrite Off ZTest Always
@@ -28,6 +29,8 @@
 			float _Color2Treshold;
 			float _Color3Treshold;
 			float _Color4Treshold;
+
+			float _ShowWebcam;
 
 			float distanceColor (fixed4 colorA, fixed4 colorB)
 			{
@@ -62,8 +65,7 @@
 				col = max(col, buffer);
 				col = lerp(col, gui, gui.a);
 
-				// return webcam;
-				return col;
+				return lerp(col, webcam, _ShowWebcam);
 			}
 			ENDCG
 		}
