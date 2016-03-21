@@ -22,5 +22,6 @@ It was made during the [Culture Experience Days](https://www.weezevent.com/ced-w
 
 # 3D printed electronical maracas
 
+Photo by Julien Dorra :  
 ![LightPath](https://raw.githubusercontent.com/leon196/LightPath/master/Img/photo1-byJulienDorra.PNG)
 ![LightPath](https://raw.githubusercontent.com/leon196/LightPath/master/Img/photo2-byJulienDorra.PNG)
