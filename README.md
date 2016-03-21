@@ -16,6 +16,11 @@ It was made during the [Culture Experience Days](https://www.weezevent.com/ced-w
 
 # Team
 
+- Code : Leon
 - Music : Raphaelle
 - 3D print, welding and arduino scripts : Julien and Alice
-- Code : Leon
+
+# 3D printed electronical maracas
+
+![LightPath](https://raw.githubusercontent.com/leon196/LightPath/master/Img/photo1-byJulienDorra.PNG)
+![LightPath](https://raw.githubusercontent.com/leon196/LightPath/master/Img/photo2-byJulienDorra.PNG)
